@@ -43,8 +43,26 @@ Duas páginas, mesmo padrão do EmDia/OpenLab:
   o botão certo para cada um — Aceitar, Ligar fatura (com link direto
   para o Subsight e campo para colar o ID do documento assinado),
   Confirmar pagamento, Concluir.
-- **`professor.html`**: formulário "Gerar ciclo" e um resumo por ciclo
-  com a contagem de pedidos em cada estado.
+- **`professor.html`**: agendamento automático da geração de ciclos
+  (diário/semanal/quinzenal/mensal/personalizado), formulário manual
+  "Gerar ciclo" e um resumo por ciclo com a contagem de pedidos em cada
+  estado.
+
+## Agendamento automático
+
+Mesmo padrão já validado no EmDia: um relógio diário do `pg_cron`
+(`clientify-verificar-gerar`, 09:00 UTC) só gera um ciclo novo quando o
+intervalo escolhido pela professora já passou desde a última vez — sem
+precisar de recriar o job para mudar o ritmo. Configuração em
+`public.cli_agendamento` (linha única), editável pelo painel da
+professora (`cli_definir_agendamento`). `cli_gerar_ciclo` exige sessão
+real de professor (`fn_e_professor()`), que o `pg_cron` nunca tem — por
+isso o miolo vive em `cli_gerar_ciclo_interno` (sem gate, nunca exposto
+a `anon`/`authenticated`), mesmo padrão `_interno`/wrapper de sempre. O
+ciclo automático chama-se pela data de emissão (`YYYY-MM-DD`), não por
+um nome livre — necessário para uma cadência diária/semanal não colidir
+com a idempotência de `cli_gerar_ciclo` (um ciclo só se gera uma vez).
+Ver `sql/002_agendamento_automatico.sql`.
 
 ## Identidade visual
 

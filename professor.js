@@ -39,6 +39,55 @@ async function carregarResumo() {
     : '<p class="cl-vazio">Ainda não gerou nenhum ciclo.</p>';
 }
 
+// ── agendamento automático ───────────────────────────────────────────
+const elFrequencia = document.getElementById('a-frequencia');
+const elCampoIntervalo = document.getElementById('campo-intervalo');
+const elIntervalo = document.getElementById('a-intervalo');
+const elStatusAgendamento = document.getElementById('status-agendamento');
+
+function alternarCampoIntervalo() {
+  elCampoIntervalo.hidden = elFrequencia.value !== 'personalizado';
+}
+elFrequencia.addEventListener('change', alternarCampoIntervalo);
+
+function textoStatusAgendamento(d) {
+  if (!d.ativo) return 'Agendamento desativado — o ciclo só é gerado manualmente.';
+  const ultima = d.ultima_execucao ? `Última geração automática: ${formatarData(d.ultima_execucao)}.` : 'Ainda não houve nenhuma geração automática.';
+  const proxima = d.proxima_prevista ? ` Próxima prevista: ${formatarData(d.proxima_prevista)}.` : '';
+  return ultima + proxima;
+}
+
+async function carregarAgendamento() {
+  const r = await api('cli_agendamento_atual');
+  if (!r.ok) { elStatusAgendamento.textContent = r.erro; return; }
+  const d = r.dados;
+  elFrequencia.value = d.frequencia;
+  elIntervalo.value = d.intervalo_dias;
+  document.getElementById('a-valor').value = (d.valor_medio / 100).toFixed(2);
+  document.getElementById('a-ativo').checked = d.ativo;
+  alternarCampoIntervalo();
+  elStatusAgendamento.textContent = textoStatusAgendamento(d);
+}
+
+document.getElementById('form-agendamento').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  const msg = document.getElementById('msg-agendamento');
+  const btn = ev.target.querySelector('button[type="submit"]');
+  btn.disabled = true;
+  mostrarMsg(msg, 'A guardar…');
+  const r = await api('cli_definir_agendamento', {
+    p_frequencia: elFrequencia.value,
+    p_valor_medio: Math.round(Number(document.getElementById('a-valor').value) * 100),
+    p_intervalo_dias: elFrequencia.value === 'personalizado' ? Number(elIntervalo.value) : null,
+    p_ativo: document.getElementById('a-ativo').checked,
+  });
+  btn.disabled = false;
+  if (!r.ok) { mostrarMsg(msg, r.erro, 'erro'); return; }
+  mostrarMsg(msg, 'Agendamento guardado.', 'ok');
+  elIntervalo.value = r.dados.intervalo_dias;
+  elStatusAgendamento.textContent = textoStatusAgendamento(r.dados);
+});
+
 document.getElementById('form-gerar').addEventListener('submit', async (ev) => {
   ev.preventDefault();
   const msg = document.getElementById('msg-gerar');
@@ -66,7 +115,7 @@ ligarFormularioLogin('form-login', async () => {
   }
   mostrarPainel();
   montarTopo(ctx);
-  await carregarResumo();
+  await Promise.all([carregarAgendamento(), carregarResumo()]);
 });
 
 (async function arrancar() {
@@ -74,5 +123,5 @@ ligarFormularioLogin('form-login', async () => {
   if (!ctx || !ctx.pessoa || ctx.pessoa.papel !== 'professor') { mostrarEntrada(); return; }
   mostrarPainel();
   montarTopo(ctx);
-  await carregarResumo();
+  await Promise.all([carregarAgendamento(), carregarResumo()]);
 })();

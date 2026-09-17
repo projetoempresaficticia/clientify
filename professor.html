@@ -2,7 +2,7 @@
 <html lang="pt-PT">
 <head>
   <meta charset="UTF-8" />
-  <meta name="clientify-versao" content="f334d2feb8e1" />
+  <meta name="clientify-versao" content="9d11e52d648e" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Painel da professora — Clientify</title>
   <meta name="description" content="Gerar o ciclo de pedidos e acompanhar o estado de cada um." />
@@ -46,6 +46,40 @@
     <p class="cl-suave" style="margin-bottom:var(--cl-e5)">Gerar o ciclo de pedidos e acompanhar quem está a processar.</p>
 
     <div class="cl-cartao" style="margin-bottom:var(--cl-e5)">
+      <h2 class="cl-h3" style="margin-bottom:var(--cl-e2)">Agendamento automático</h2>
+      <p class="cl-caption" style="margin-bottom:var(--cl-e4)">O ciclo de pedidos passa a gerar-se sozinho, sem precisar de clicar em "Gerar pedidos".</p>
+      <form id="form-agendamento">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:var(--cl-e4)">
+          <div class="cl-campo" style="margin:0">
+            <label for="a-frequencia">Frequência</label>
+            <select id="a-frequencia" required>
+              <option value="diario">Diariamente (1 dia)</option>
+              <option value="semanal">Semanalmente (7 dias)</option>
+              <option value="quinzenal">Quinzenalmente (15 dias)</option>
+              <option value="mensal">Mensalmente (30 dias)</option>
+              <option value="personalizado">Personalizado</option>
+            </select>
+          </div>
+          <div class="cl-campo" id="campo-intervalo" style="margin:0" hidden>
+            <label for="a-intervalo">A cada quantos dias</label>
+            <input id="a-intervalo" type="number" min="1" max="365" value="7" />
+          </div>
+          <div class="cl-campo" style="margin:0">
+            <label for="a-valor">Valor médio do pedido (€)</label>
+            <input id="a-valor" type="number" min="0.01" step="0.01" value="50.00" required />
+          </div>
+        </div>
+        <label class="cl-fila" style="margin-top:var(--cl-e2);gap:8px;font-size:14px">
+          <input type="checkbox" id="a-ativo" checked style="width:18px;height:18px;accent-color:var(--cl-primaria)" />
+          Agendamento ativo
+        </label>
+        <p class="cl-caption" id="status-agendamento" style="margin-top:var(--cl-e3)">A carregar…</p>
+        <p class="cl-msg" id="msg-agendamento" style="margin-bottom:var(--cl-e2)"></p>
+        <button type="submit" class="cl-botao cl-botao-primario" style="margin-top:var(--cl-e2)">Guardar agendamento</button>
+      </form>
+    </div>
+
+    <div class="cl-cartao" style="margin-bottom:var(--cl-e5)">
       <h2 class="cl-h3" style="margin-bottom:var(--cl-e4)">Gerar ciclo</h2>
       <form id="form-gerar">
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:var(--cl-e4)">
@@ -72,6 +106,6 @@
 <script src="https://projetoempresaficticia.github.io/pp-base/web/comum.js"></script>
 <script src="web/biblioteca/clientify.js?v=e56c9be2"></script>
 <script src="web/atualizar.js?v=bd04b40a"></script>
-<script src="professor.js?v=5ae9d1db"></script>
+<script src="professor.js?v=1138182f"></script>
 </body>
 </html>
