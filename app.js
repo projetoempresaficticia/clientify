@@ -10,6 +10,7 @@ const elJanelaFatura = document.getElementById('janela-fatura');
 let PEDIDOS_CACHE = null;
 let filtroAtual = 'todos';
 let pedidoParaFatura = null;
+let NOME_EMPRESA = null;
 
 function mostrarPainel() { elAVerificar.hidden = true; elEntrada.hidden = true; elPainel.hidden = false; }
 function mostrarEntrada() { elAVerificar.hidden = true; elPainel.hidden = true; elEntrada.hidden = false; }
@@ -64,7 +65,10 @@ function linhaPedido(p) {
       </div>
       <p class="cl-body" style="margin-top:var(--cl-e2)"><b>${esc(p.cliente_nome)}</b></p>
       <p class="cl-caption" style="margin-top:2px">${itens || 'sem itens'}</p>
-      <div style="margin-top:var(--cl-e3)">${botaoAcao(p)}</div>
+      <div class="cl-fila" style="margin-top:var(--cl-e3)">
+        ${botaoAcao(p)}
+        <button type="button" class="cl-botao cl-botao-secundario cl-botao-pequeno" data-pdf="${p.pedido_id}">Confirmação (PDF)</button>
+      </div>
     </article>`;
 }
 
@@ -111,6 +115,13 @@ function ligarAcoes() {
       await carregarPedidos(true); await renderizar();
     });
   });
+  elLista.querySelectorAll('[data-pdf]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const pedido = (PEDIDOS_CACHE || []).find((p) => p.pedido_id === btn.dataset.pdf);
+      if (!pedido) return;
+      gerarConfirmacaoPdf(pedido, NOME_EMPRESA);
+    });
+  });
 }
 
 document.getElementById('fatura-cancelar').addEventListener('click', () => elJanelaFatura.close());
@@ -145,6 +156,7 @@ ligarFormularioLogin('form-login', async () => {
     await sb.auth.signOut();
     return;
   }
+  NOME_EMPRESA = ctx.empresa.nome;
   mostrarPainel();
   montarTopo(ctx);
   await renderizar();
@@ -154,6 +166,7 @@ ligarFormularioLogin('form-login', async () => {
   const ctx = await quemSou();
   if (seProfessorRedirecionar(ctx)) return;
   if (!ctx || !ctx.empresa) { mostrarEntrada(); return; }
+  NOME_EMPRESA = ctx.empresa.nome;
   mostrarPainel();
   montarTopo(ctx);
   await renderizar();

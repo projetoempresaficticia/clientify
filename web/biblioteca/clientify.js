@@ -99,6 +99,60 @@ function ligarFormularioLogin(idForm, aoEntrar) {
   });
 }
 
+// ── confirmação de compra em PDF — gerada no browser (jsPDF), abre
+// numa nova aba para ver/imprimir/guardar. Não é a fatura assinada
+// (essa continua a viver no Subsight) — é só o comprovativo do que foi
+// encomendado, como um recibo de encomenda de uma loja a sério. ──────
+function gerarConfirmacaoPdf(pedido, nomeEmpresa) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const codigo = pedido.pedido_id.slice(0, 8).toUpperCase();
+
+  doc.setFontSize(18);
+  doc.text('Confirmação de compra', 14, 20);
+
+  doc.setFontSize(10);
+  doc.setTextColor(90);
+  doc.text('Documento gerado automaticamente pelo Clientify — não é a fatura fiscal.', 14, 27);
+
+  doc.setTextColor(20);
+  doc.setFontSize(11);
+  const linhas = [
+    ['Nº do pedido', codigo],
+    ['Vendedor', nomeEmpresa || '—'],
+    ['Cliente', pedido.cliente_nome],
+    ['Ciclo', pedido.ciclo],
+    ['Data', formatarData(pedido.criada_em)],
+    ['Estado', pedido.estado],
+  ];
+  let y = 38;
+  linhas.forEach(([rotulo, valor]) => {
+    doc.setFont(undefined, 'bold');
+    doc.text(rotulo + ':', 14, y);
+    doc.setFont(undefined, 'normal');
+    doc.text(String(valor), 55, y);
+    y += 7;
+  });
+
+  doc.autoTable({
+    startY: y + 4,
+    head: [['Produto', 'Quantidade', 'Preço unit.', 'Subtotal']],
+    body: pedido.itens.map((it) => [
+      it.produto,
+      String(it.quantidade),
+      formatarDinheiro(it.preco_unit),
+      formatarDinheiro(it.preco_unit * it.quantidade),
+    ]),
+    foot: [['', '', 'Total', formatarDinheiro(pedido.valor_total)]],
+    theme: 'grid',
+    headStyles: { fillColor: [232, 80, 2] },
+    footStyles: { fillColor: [245, 245, 245], textColor: 20, fontStyle: 'bold' },
+  });
+
+  const url = doc.output('bloburl');
+  window.open(url, '_blank');
+}
+
 // ── topo (menu sempre em cima) — a empresa e a professora veem nomes
 // diferentes, mesmo padrão do EmDia ─────────────────────────────────
 function montarTopo(ctx) {

@@ -64,6 +64,18 @@ um nome livre — necessário para uma cadência diária/semanal não colidir
 com a idempotência de `cli_gerar_ciclo` (um ciclo só se gera uma vez).
 Ver `sql/002_agendamento_automatico.sql`.
 
+## Confirmação de compra em PDF
+
+Cada pedido tem um botão "Confirmação (PDF)", disponível em qualquer
+estado — gerado no próprio browser com **jsPDF** + **jspdf-autotable**
+(via CDN, nenhuma dependência nova no servidor), abre numa nova aba
+(`doc.output('bloburl')` + `window.open`, mais fiável do que
+`dataurlnewwindow` em Chrome headless). Mostra nº do pedido, vendedor,
+cliente, ciclo, data, estado e a tabela de itens com o total — é o
+comprovativo de encomenda (como um recibo de loja), **não** a fatura
+fiscal assinada (essa continua a viver no Subsight e é o que liberta o
+pagamento). Ver `gerarConfirmacaoPdf` em `web/biblioteca/clientify.js`.
+
 ## Identidade visual
 
 Tema escuro (preto puro), Inter, laranja de marca — a partir dos
