@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="clientify-versao" content="f334d2feb8e1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clientify — Pedidos</title>
+  <meta name="description" content="Os pedidos dos seus clientes, num só lugar." />
+  <link rel="icon" href="favicon-32.png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="web/biblioteca/clientify.css?v=236aa0b2" />
+</head>
+<body>
+
+<div class="cl-a-verificar" id="a-verificar"><p class="cl-vazio">A verificar sessão…</p></div>
+
+<div class="cl-entrada" id="entrada" hidden>
+  <div class="cl-entrada-cartao">
+    <div class="cl-entrada-marca">
+      <img src="clientify-512.png" alt="" />
+      <div><b>Clientify</b><small>Pedidos dos seus clientes</small></div>
+    </div>
+    <form id="form-login">
+      <div class="cl-campo">
+        <label for="email">Email de login</label>
+        <input id="email" name="email" type="email" required autocomplete="username" placeholder="nome@prepara.pt" />
+      </div>
+      <div class="cl-campo cl-campo-senha" style="margin:0">
+        <label for="senha">Senha</label>
+        <input id="senha" name="senha" type="password" required autocomplete="current-password" placeholder="A sua senha" />
+        <button type="button" class="cl-ver-senha" id="btn-ver-senha" aria-pressed="false" aria-controls="senha">Mostrar</button>
+      </div>
+      <p class="cl-msg" style="margin-top:var(--cl-e3)"></p>
+      <button type="submit" class="cl-botao cl-botao-primario" style="width:100%;margin-top:var(--cl-e4)">Entrar</button>
+    </form>
+  </div>
+</div>
+
+<div class="cl-pagina" id="painel" hidden>
+  <header id="topo"></header>
+  <main class="cl-env" style="padding-top:var(--cl-e5);padding-bottom:64px">
+    <h1 class="cl-h1" style="margin-bottom:var(--cl-e2);font-size:32px;line-height:40px">Pedidos</h1>
+    <p class="cl-suave" style="margin-bottom:var(--cl-e4)">Aceite, ligue a fatura assinada e confirme o pagamento — o dinheiro só entra com fatura válida.</p>
+
+    <div class="cl-segmentado" id="segmentado" style="margin-bottom:var(--cl-e5)">
+      <button type="button" data-filtro="todos" aria-current="true">Todos</button>
+      <button type="button" data-filtro="enviado">Novos</button>
+      <button type="button" data-filtro="aceite">Aceites</button>
+      <button type="button" data-filtro="fatura_emitida">Com fatura</button>
+      <button type="button" data-filtro="pago">Pagos</button>
+      <button type="button" data-filtro="concluído">Concluídos</button>
+    </div>
+
+    <div id="lista-pedidos"><p class="cl-vazio">A carregar…</p></div>
+  </main>
+</div>
+
+<dialog id="janela-fatura">
+  <h2 class="cl-h3" style="margin-bottom:var(--cl-e2)">Ligar fatura assinada</h2>
+  <p class="cl-caption" style="margin-bottom:var(--cl-e4)">
+    Crie uma "Declaração" no Subsight em nome da sua empresa, assine-a e anexe o
+    ficheiro. Depois cole aqui o ID do documento (aparece no final do link,
+    depois de <span class="mono">documento.html?id=</span>).
+  </p>
+  <a class="cl-botao cl-botao-secundario" style="margin-bottom:var(--cl-e4)"
+     href="https://projetoempresaficticia.github.io/subsight/criar.html" target="_blank" rel="noopener">Abrir Subsight</a>
+  <div class="cl-campo" style="margin:0">
+    <label for="fatura-doc-id">ID do documento</label>
+    <input id="fatura-doc-id" placeholder="ex.: 3fa2b1c4-…" />
+  </div>
+  <p class="cl-msg" id="msg-fatura" style="margin-top:var(--cl-e3)"></p>
+  <div class="cl-fila" style="justify-content:flex-end;margin-top:var(--cl-e4)">
+    <button type="button" class="cl-botao cl-botao-terciario" id="fatura-cancelar">Cancelar</button>
+    <button type="button" class="cl-botao cl-botao-primario" id="fatura-confirmar">Ligar fatura</button>
+  </div>
+</dialog>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://projetoempresaficticia.github.io/pp-base/web/comum.js"></script>
+<script src="web/biblioteca/clientify.js?v=e56c9be2"></script>
+<script src="web/atualizar.js?v=bd04b40a"></script>
+<script src="app.js?v=87a78445"></script>
+</body>
+</html>

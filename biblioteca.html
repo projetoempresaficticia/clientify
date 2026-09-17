@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="clientify-versao" content="f334d2feb8e1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biblioteca — Clientify</title>
+  <meta name="description" content="Referência de identidade visual: cores, tipografia e componentes." />
+  <link rel="icon" href="favicon-32.png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="web/biblioteca/clientify.css?v=236aa0b2" />
+  <style>
+    .chip { display: inline-flex; flex-direction: column; gap: 6px; width: 140px; }
+    .chip .amostra { height: 64px; border-radius: var(--cl-r); border: 1px solid var(--cl-borda); cursor: pointer; }
+    .secao { margin-bottom: var(--cl-e6); }
+  </style>
+</head>
+<body>
+
+<header class="cl-topo">
+  <div class="cl-topo-int">
+    <a class="cl-marca" href="index.html">
+      <img src="favicon-32.png" alt="" />
+      Clientify — Biblioteca
+    </a>
+  </div>
+</header>
+
+<main class="cl-env" style="padding-top:var(--cl-e5);padding-bottom:64px">
+
+  <section class="secao">
+    <h1 class="cl-h1" style="margin-bottom:var(--cl-e2);font-size:32px;line-height:40px">Identidade visual</h1>
+    <p class="cl-suave">Tokens extraídos do kit fornecido pelo Germano (17 de setembro de 2026). Clique numa cor para copiar o hex.</p>
+  </section>
+
+  <section class="secao">
+    <h2 class="cl-h3" style="margin-bottom:var(--cl-e4)">01 · Cores</h2>
+    <div class="cl-fila" style="gap:var(--cl-e4)">
+      <div class="chip"><div class="amostra" style="background:var(--cl-primaria)" data-copiar="#E85002"></div><b class="cl-caption">Branding Orange</b><span class="cl-caption mono">#E85002</span></div>
+      <div class="chip"><div class="amostra" style="background:var(--cl-preto);border:1px solid var(--cl-borda)" data-copiar="#000000"></div><b class="cl-caption">Primary</b><span class="cl-caption mono">#000000</span></div>
+      <div class="chip"><div class="amostra" style="background:var(--cl-branco)" data-copiar="#F9F9F9"></div><b class="cl-caption">White</b><span class="cl-caption mono">#F9F9F9</span></div>
+      <div class="chip"><div class="amostra" style="background:var(--cl-cinza-claro)" data-copiar="#A7A7A7"></div><b class="cl-caption">Light Gray</b><span class="cl-caption mono">#A7A7A7</span></div>
+      <div class="chip"><div class="amostra" style="background:var(--cl-cinza)" data-copiar="#646464"></div><b class="cl-caption">Gray</b><span class="cl-caption mono">#646464</span></div>
+      <div class="chip"><div class="amostra" style="background:var(--cl-cinza-escuro)" data-copiar="#333333"></div><b class="cl-caption">Dark Gray</b><span class="cl-caption mono">#333333</span></div>
+    </div>
+    <p class="cl-caption" style="margin-top:var(--cl-e3)">
+      Correção de contraste medida com o auditor WCAG real (não assumida): branco
+      sobre <code>--cl-primaria</code> media 3,57:1 (abaixo de 4,5:1) — o botão
+      primário usa sempre texto preto (5,58:1). Os cinco selos de estado também
+      foram medidos um a um (cada fundo tem luminância muito diferente): preto
+      sobre sucesso 10,45:1 e sobre info 5,52:1; branco sobre aviso 5,35:1, sobre
+      erro 6,46:1 e sobre neutro 4,62:1.
+    </p>
+  </section>
+
+  <section class="secao">
+    <h2 class="cl-h3" style="margin-bottom:var(--cl-e4)">02 · Tipografia</h2>
+    <p class="cl-h1">H1 — Inter Bold 48/56</p>
+    <p class="cl-h2">H2 — Inter Semibold 32/40</p>
+    <p class="cl-h3">H3 — Inter Semibold 24/32</p>
+    <p class="cl-body">Body — Inter Regular 16/24. Texto corrido das listas e descrições.</p>
+    <p class="cl-label">Label — Inter Medium 14/20.</p>
+    <p class="cl-caption">Caption — Inter Regular 14/20, cor suave.</p>
+  </section>
+
+  <section class="secao">
+    <h2 class="cl-h3" style="margin-bottom:var(--cl-e4)">03 · Botões</h2>
+    <div class="cl-fila">
+      <button class="cl-botao cl-botao-primario">Primário</button>
+      <button class="cl-botao cl-botao-secundario">Secundário</button>
+      <button class="cl-botao cl-botao-terciario">Terciário</button>
+      <button class="cl-botao cl-botao-perigoso">Perigoso</button>
+      <button class="cl-botao cl-botao-primario" disabled data-contraste-proposital
+              title="Elementos desativados não têm requisito de contraste no WCAG (1.4.11).">Desativado</button>
+    </div>
+  </section>
+
+  <section class="secao">
+    <h2 class="cl-h3" style="margin-bottom:var(--cl-e4)">04 · Campos e formulário</h2>
+    <div style="max-width:360px">
+      <div class="cl-campo">
+        <label for="ex-texto">Campo de texto</label>
+        <input id="ex-texto" placeholder="Escreva aqui…" />
+      </div>
+      <div class="cl-campo">
+        <label for="ex-select">Select</label>
+        <select id="ex-select"><option>Opção 1</option><option>Opção 2</option></select>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao">
+    <h2 class="cl-h3" style="margin-bottom:var(--cl-e4)">05 · Selos de estado (do pedido)</h2>
+    <div class="cl-fila">
+      <span class="cl-selo cl-selo-neutro"><span class="ponto"></span>Novo</span>
+      <span class="cl-selo cl-selo-info"><span class="ponto"></span>Aceite</span>
+      <span class="cl-selo cl-selo-aviso"><span class="ponto"></span>Com fatura</span>
+      <span class="cl-selo cl-selo-sucesso"><span class="ponto"></span>Pago</span>
+      <span class="cl-selo cl-selo-erro"><span class="ponto"></span>Recusado</span>
+    </div>
+  </section>
+
+  <section class="secao">
+    <h2 class="cl-h3" style="margin-bottom:var(--cl-e4)">06 · Cartões e mensagens</h2>
+    <div class="cl-cartao" style="max-width:400px">
+      <h3 class="cl-h3" style="margin-bottom:var(--cl-e2);font-size:18px">Cartão de exemplo</h3>
+      <p class="cl-suave cl-body">Conteúdo dentro de um <code>.cl-cartao</code>, sobre a superfície escura.</p>
+      <p class="cl-msg cl-msg-ok" style="margin-top:var(--cl-e3)">Mensagem de sucesso.</p>
+      <p class="cl-msg cl-msg-erro">Mensagem de erro.</p>
+    </div>
+  </section>
+
+</main>
+
+<script src="web/biblioteca/clientify.js?v=e56c9be2"></script>
+<script>
+  document.querySelectorAll('[data-copiar]').forEach((el) => {
+    el.addEventListener('click', () => navigator.clipboard.writeText(el.dataset.copiar));
+  });
+</script>
+</body>
+</html>

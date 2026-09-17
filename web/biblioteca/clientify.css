@@ -1,0 +1,211 @@
+/* Clientify — sistema de desenho. Tema escuro (preto puro), Inter em
+   tudo, laranja de marca. Tokens extraídos do kit de identidade
+   fornecido pelo Germano (17 de setembro de 2026) — as cores com hex
+   vêm rotuladas no próprio kit; os selos de estado foram amostrados por
+   pixel diretamente da imagem do kit ("Lead Status Badges"), nunca
+   adivinhados. Contraste medido antes de escrever (não assumido) — ver
+   nota junto a cada selo. */
+
+:root {
+  /* cor de marca (rotuladas no kit) */
+  --cl-primaria: #E85002;
+  /* correção de contraste: --cl-primaria como texto sobre
+     --cl-superficie-elevada mede 3,36:1 (abaixo de 4,5) — este tom mais
+     claro mede 5,41:1. Só para texto solto sobre superfícies escuras
+     (ex.: o botão "Mostrar" da senha); botões continuam com a marca. */
+  --cl-primaria-clara: #FF8A4D;
+  --cl-preto: #000000;
+  --cl-branco: #F9F9F9;
+  --cl-cinza-claro: #A7A7A7;
+  --cl-cinza: #646464;
+  --cl-cinza-escuro: #333333;
+
+  --cl-fundo: #000000;
+  /* não rotulada no kit — só Primary(preto)/Dark Gray(#333) existiam;
+     um tom intermédio dá profundidade aos cartões sem inventar cor de
+     marca nova, fica dentro do espectro neutro já implícito no kit. */
+  --cl-superficie: #141414;
+  --cl-superficie-elevada: #333333;
+  --cl-borda: #3D3D3D;
+
+  --cl-texto: #F9F9F9;
+  --cl-texto-suave: #A7A7A7;
+
+  /* selos de estado — amostrados por pixel do kit ("Lead Status
+     Badges": New/Contacted/Qualified/Won/Lost) */
+  --cl-sucesso: #53CD87;
+  --cl-aviso: #AD4904;
+  --cl-info: #4789B6;
+  --cl-erro: #AD271E;
+  --cl-neutro: #6B727A;
+
+  --cl-e1: 4px; --cl-e2: 8px; --cl-e3: 12px; --cl-e4: 16px; --cl-e5: 24px; --cl-e6: 32px;
+  --cl-r-sm: 8px; --cl-r: 12px; --cl-r-lg: 16px; --cl-r-xl: 24px;
+
+  --cl-sombra-baixa: 0 1px 3px rgba(0,0,0,.5);
+  --cl-sombra-media: 0 6px 16px rgba(0,0,0,.55);
+  --cl-sombra-alta: 0 16px 40px rgba(0,0,0,.65);
+
+  --cl-fonte: 'Inter', sans-serif;
+}
+
+* { box-sizing: border-box; }
+html { color-scheme: dark; }
+body {
+  margin: 0; background: var(--cl-fundo); color: var(--cl-texto);
+  font: 400 16px/24px var(--cl-fonte); -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4 { font-family: var(--cl-fonte); font-weight: 700; margin: 0; color: var(--cl-texto); }
+a { color: inherit; }
+[hidden] { display: none !important; }
+
+/* ── escala de tipografia (rotulada no kit) ──────────────────────────── */
+.cl-h1 { font: 700 48px/56px var(--cl-fonte); }
+.cl-h2 { font: 600 32px/40px var(--cl-fonte); }
+.cl-h3 { font: 600 24px/32px var(--cl-fonte); }
+.cl-body { font: 400 16px/24px var(--cl-fonte); }
+.cl-label { font: 500 14px/20px var(--cl-fonte); }
+.cl-caption { font: 400 14px/20px var(--cl-fonte); color: var(--cl-texto-suave); }
+.cl-suave { color: var(--cl-texto-suave); }
+
+/* ── layout ───────────────────────────────────────────────────────────── */
+.cl-pagina { min-height: 100vh; background: var(--cl-fundo); }
+.cl-env { max-width: 960px; margin: 0 auto; padding: 0 var(--cl-e5); }
+.cl-fila { display: flex; align-items: center; gap: var(--cl-e3); flex-wrap: wrap; }
+
+/* ── navegação ────────────────────────────────────────────────────────── */
+.cl-topo {
+  background: var(--cl-superficie); border-bottom: 1px solid var(--cl-borda);
+  position: sticky; top: 0; z-index: 10;
+}
+.cl-topo-int { max-width: 960px; margin: 0 auto; padding: var(--cl-e3) var(--cl-e4); display: flex; align-items: center; justify-content: space-between; gap: var(--cl-e4); }
+.cl-marca { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--cl-texto);
+  font-family: var(--cl-fonte); font-weight: 700; font-size: 18px; }
+.cl-marca img { width: 30px; height: 30px; display: block; }
+.cl-segmentado { display: inline-flex; background: var(--cl-superficie-elevada); border-radius: var(--cl-r); padding: 3px; gap: 2px; }
+.cl-segmentado button {
+  border: 0; background: transparent; color: var(--cl-texto-suave); padding: 7px 16px;
+  border-radius: calc(var(--cl-r) - 3px); font: 600 13.5px/1 var(--cl-fonte); cursor: pointer;
+}
+.cl-segmentado button[aria-current="true"] { background: var(--cl-primaria); color: #000; }
+
+/* ── botões (kit: primário sólido laranja, secundário contornado,
+   terciário só texto) — correção de contraste: branco sobre a marca
+   media 3,57:1 (abaixo de 4,5), preto sobre a marca mede 5,58:1 — o
+   botão primário usa sempre texto preto, nunca branco. ─────────────── */
+.cl-botao {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 44px; padding: 0 var(--cl-e4); border-radius: var(--cl-r); border: 0;
+  font: 600 14px/1 var(--cl-fonte); cursor: pointer; white-space: nowrap;
+  transition: background 120ms ease, border-color 120ms ease, opacity 120ms ease;
+}
+.cl-botao-pequeno { height: 36px; padding: 0 var(--cl-e3); font-size: 13.5px; }
+.cl-botao-primario { background: var(--cl-primaria); color: #000; }
+.cl-botao-primario:hover { background: #FF6A1A; }
+.cl-botao-primario:active { background: #C94500; }
+.cl-botao-secundario {
+  background: transparent; color: var(--cl-texto); border: 1.5px solid var(--cl-borda);
+}
+.cl-botao-secundario:hover { border-color: var(--cl-primaria); background: rgba(232,80,2,.08); }
+.cl-botao-terciario { background: transparent; color: var(--cl-texto-suave); }
+.cl-botao-terciario:hover { color: var(--cl-texto); }
+.cl-botao-perigoso { background: transparent; color: #FF7A6E; border: 1.5px solid rgba(173,39,30,.5); }
+.cl-botao-perigoso:hover { background: rgba(173,39,30,.15); }
+.cl-botao:disabled { opacity: .4; cursor: not-allowed; }
+.cl-botao:focus-visible { outline: 2px solid var(--cl-primaria); outline-offset: 2px; }
+
+.cl-botao-carregando { position: relative; color: transparent !important; }
+.cl-botao-carregando::after {
+  content: ''; position: absolute; width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid rgba(0,0,0,.35); border-top-color: #000;
+  animation: cl-girar .7s linear infinite;
+}
+@keyframes cl-girar { to { transform: rotate(360deg); } }
+
+/* ── campos ───────────────────────────────────────────────────────────── */
+.cl-campo { margin-bottom: var(--cl-e4); }
+.cl-campo label { display: block; font: 500 14px/20px var(--cl-fonte); margin-bottom: 6px; color: var(--cl-texto); }
+.cl-campo input, .cl-campo select, .cl-campo textarea {
+  width: 100%; height: 44px; padding: 0 var(--cl-e3); border-radius: var(--cl-r-sm);
+  border: 1.5px solid var(--cl-borda); background: var(--cl-superficie); color: var(--cl-texto);
+  font: 400 15px/1 var(--cl-fonte);
+}
+.cl-campo textarea { height: auto; padding: var(--cl-e3); line-height: 1.5; }
+.cl-campo input::placeholder, .cl-campo textarea::placeholder { color: #8A8A8A; }
+.cl-campo input:focus, .cl-campo select:focus, .cl-campo textarea:focus {
+  outline: none; border-color: var(--cl-primaria); box-shadow: 0 0 0 3px rgba(232,80,2,.22);
+}
+.cl-campo.cl-erro input { border-color: var(--cl-erro); }
+.cl-campo .cl-msg-erro { display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 13px; color: #FF7A6E; }
+.cl-campo input:disabled { opacity: .45; cursor: not-allowed; }
+
+/* ── selos de estado (pills) — cada um com a cor de texto que passa no
+   WCAG (medido, não uniforme como nos outros apps porque cada fundo
+   tem luminância muito diferente): preto sobre sucesso 10,45:1 e sobre
+   info 5,52:1; branco sobre aviso 5,35:1, sobre erro 6,46:1 e sobre
+   neutro 4,62:1. ─────────────────────────────────────────────────────*/
+.cl-selo {
+  display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px;
+  border-radius: 999px; font: 600 12.5px/1 var(--cl-fonte);
+}
+.cl-selo .ponto { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .6; }
+.cl-selo-sucesso { background: var(--cl-sucesso); color: #000; }
+.cl-selo-aviso   { background: var(--cl-aviso); color: #fff; }
+.cl-selo-info    { background: var(--cl-info); color: #000; }
+.cl-selo-erro    { background: var(--cl-erro); color: #fff; }
+.cl-selo-neutro  { background: var(--cl-neutro); color: #fff; }
+
+/* ── cartões ──────────────────────────────────────────────────────────── */
+.cl-cartao {
+  background: var(--cl-superficie); border: 1px solid var(--cl-borda);
+  border-radius: var(--cl-r-lg); padding: var(--cl-e4); box-shadow: var(--cl-sombra-baixa);
+}
+
+/* ── feedback ─────────────────────────────────────────────────────────── */
+.cl-msg { font: 500 13.5px/1.4 var(--cl-fonte); min-height: 1px; }
+.cl-msg-erro { color: #FF7A6E; }
+.cl-msg-ok { color: var(--cl-sucesso); }
+.cl-vazio { text-align: center; padding: var(--cl-e6) var(--cl-e4); color: var(--cl-texto-suave); }
+
+/* ── <dialog> a sério (ligar fatura, etc.) ───────────────────────────── */
+dialog {
+  border: 0; border-radius: var(--cl-r-lg); padding: var(--cl-e4);
+  max-width: 400px; width: calc(100% - var(--cl-e5) * 2);
+  background: var(--cl-superficie-elevada); border: 1px solid var(--cl-borda);
+  color: var(--cl-texto); box-shadow: var(--cl-sombra-alta);
+}
+dialog::backdrop { background: rgba(0,0,0,.7); }
+.mono { font-family: ui-monospace, 'SF Mono', Consolas, monospace; }
+
+/* ── entrada (login) ──────────────────────────────────────────────────── */
+.cl-a-verificar { min-height: 100svh; display: flex; align-items: center; justify-content: center; }
+.cl-entrada {
+  position: relative; min-height: 100svh; display: flex; align-items: center; justify-content: center;
+  padding: clamp(24px, 5vh, 64px) clamp(16px, 4vw, 56px);
+  background: var(--cl-fundo) url('../marca/clientify-fundo.jpg') center/cover no-repeat;
+}
+.cl-entrada::before {
+  content: ''; position: absolute; inset: 0; background: rgba(0,0,0,.5);
+}
+.cl-entrada-cartao {
+  position: relative; width: 100%; max-width: 400px;
+  background: var(--cl-superficie-elevada); border: 1px solid var(--cl-borda);
+  border-radius: var(--cl-r-lg); padding: clamp(24px, 4vh, 34px); box-shadow: var(--cl-sombra-alta);
+}
+.cl-entrada-marca { display: flex; align-items: center; gap: var(--cl-e3); margin-bottom: clamp(16px, 3vh, 24px); }
+.cl-entrada-marca img { width: 44px; height: 44px; }
+.cl-entrada-marca b { font-family: var(--cl-fonte); font-size: 20px; }
+.cl-entrada-marca small { display: block; font-weight: 400; font-size: 12.5px; color: var(--cl-texto-suave); margin-top: 2px; }
+.cl-campo-senha { position: relative; }
+.cl-campo-senha input { padding-right: 96px; }
+.cl-ver-senha {
+  position: absolute; right: 6px; bottom: 6px; height: 32px; padding: 0 11px;
+  border: 0; border-radius: 9px; background: transparent; color: var(--cl-primaria-clara);
+  font: 500 13px/1 var(--cl-fonte); cursor: pointer;
+}
+.cl-ver-senha:hover { background: rgba(232,80,2,.12); }
+
+@media (max-width: 640px) {
+  .cl-entrada { background-image: none; }
+  .cl-entrada::before { display: none; }
+}

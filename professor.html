@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="clientify-versao" content="f334d2feb8e1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Painel da professora — Clientify</title>
+  <meta name="description" content="Gerar o ciclo de pedidos e acompanhar o estado de cada um." />
+  <link rel="icon" href="favicon-32.png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="web/biblioteca/clientify.css?v=236aa0b2" />
+</head>
+<body>
+
+<div class="cl-a-verificar" id="a-verificar"><p class="cl-vazio">A verificar sessão…</p></div>
+<div class="cl-entrada" id="entrada" hidden>
+  <div class="cl-entrada-cartao">
+    <div class="cl-entrada-marca">
+      <img src="clientify-512.png" alt="" />
+      <div><b>Clientify</b><small>Área da professora</small></div>
+    </div>
+    <form id="form-login">
+      <div class="cl-campo">
+        <label for="email">Email de login</label>
+        <input id="email" name="email" type="email" required autocomplete="username" placeholder="nome@prepara.pt" />
+      </div>
+      <div class="cl-campo cl-campo-senha" style="margin:0">
+        <label for="senha">Senha</label>
+        <input id="senha" name="senha" type="password" required autocomplete="current-password" placeholder="A sua senha" />
+        <button type="button" class="cl-ver-senha" id="btn-ver-senha" aria-pressed="false" aria-controls="senha">Mostrar</button>
+      </div>
+      <p class="cl-msg" style="margin-top:var(--cl-e3)"></p>
+      <button type="submit" class="cl-botao cl-botao-primario" style="width:100%;margin-top:var(--cl-e4)">Entrar</button>
+    </form>
+  </div>
+</div>
+
+<div class="cl-pagina" id="painel" hidden>
+  <header id="topo"></header>
+  <main class="cl-env" style="padding-top:var(--cl-e5);padding-bottom:64px">
+    <h1 class="cl-h1" style="margin-bottom:var(--cl-e2);font-size:32px;line-height:40px">Painel da professora</h1>
+    <p class="cl-suave" style="margin-bottom:var(--cl-e5)">Gerar o ciclo de pedidos e acompanhar quem está a processar.</p>
+
+    <div class="cl-cartao" style="margin-bottom:var(--cl-e5)">
+      <h2 class="cl-h3" style="margin-bottom:var(--cl-e4)">Gerar ciclo</h2>
+      <form id="form-gerar">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:var(--cl-e4)">
+          <div class="cl-campo" style="margin:0">
+            <label for="g-ciclo">Ciclo</label>
+            <input id="g-ciclo" placeholder="Ex.: 2026-C1" required />
+          </div>
+          <div class="cl-campo" style="margin:0">
+            <label for="g-valor">Valor médio do pedido (€)</label>
+            <input id="g-valor" type="number" min="0.01" step="0.01" value="50.00" required />
+          </div>
+        </div>
+        <p class="cl-msg" id="msg-gerar" style="margin-bottom:var(--cl-e2)"></p>
+        <button type="submit" class="cl-botao cl-botao-primario" style="margin-top:var(--cl-e2)">Gerar pedidos para todas as empresas</button>
+      </form>
+    </div>
+
+    <h2 class="cl-h3" style="margin-bottom:var(--cl-e4)">Resumo por ciclo</h2>
+    <div id="lista-resumo"><p class="cl-vazio">A carregar…</p></div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://projetoempresaficticia.github.io/pp-base/web/comum.js"></script>
+<script src="web/biblioteca/clientify.js?v=e56c9be2"></script>
+<script src="web/atualizar.js?v=bd04b40a"></script>
+<script src="professor.js?v=5ae9d1db"></script>
+</body>
+</html>
