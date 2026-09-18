@@ -49,7 +49,9 @@ Duas páginas, mesmo padrão do EmDia/OpenLab:
 - **`professor.html`**: agendamento automático da geração de ciclos
   (diário/semanal/quinzenal/mensal/personalizado), formulário manual
   "Gerar ciclo" e um resumo por ciclo com a contagem de pedidos em cada
-  estado.
+  estado — cada ciclo expande ("Ver pedidos") para a lista de pedidos
+  com a empresa a que cada um foi (`cli_professor_pedidos_do_ciclo`) e
+  o mesmo botão de confirmação em PDF que a empresa tem, para auditoria.
 
 ## Agendamento automático
 

@@ -17,7 +17,9 @@ const SELO_ESTADO = {
   pago: 'sucesso', 'concluído': 'sucesso',
 };
 
-function cartaoCiclo(c) {
+let CEDULA_PESSOA = null;
+
+function cartaoCiclo(c, indice) {
   const selos = Object.entries(c.por_estado || {})
     .map(([estado, n]) => `<span class="cl-selo cl-selo-${SELO_ESTADO[estado] || 'neutro'}"><span class="ponto"></span>${esc(ROTULO_ESTADO[estado] || estado)}: ${n}</span>`)
     .join(' ');
@@ -28,8 +30,34 @@ function cartaoCiclo(c) {
         <span class="cl-suave cl-caption">${c.total_pedidos} pedidos · ${formatarDinheiro(c.valor_total)}</span>
       </div>
       <div class="cl-fila" style="margin-top:var(--cl-e3);gap:6px">${selos}</div>
+      <button type="button" class="cl-botao cl-botao-secundario cl-botao-pequeno" style="margin-top:var(--cl-e3)"
+              data-alternar="pedidos-${indice}" data-ciclo="${esc(c.ciclo)}">Ver pedidos</button>
+      <div id="pedidos-${indice}" hidden style="margin-top:var(--cl-e3)"></div>
     </article>`;
 }
+
+function linhaPedidoProfessor(p) {
+  const itens = p.itens.map((it) => `${it.quantidade}× ${esc(it.produto)}`).join(', ');
+  return `
+    <div class="cl-cartao" style="margin-bottom:var(--cl-e2);background:var(--cl-superficie-elevada)">
+      <div class="cl-fila" style="justify-content:space-between">
+        <div>
+          <b class="cl-body">${esc(p.empresa_nome)}</b>
+          <span class="cl-caption" style="margin-left:8px">${esc(p.cliente_nome)}</span>
+        </div>
+        <b>${esc(formatarDinheiro(p.valor_total))}</b>
+      </div>
+      <div class="cl-fila" style="margin-top:6px;justify-content:space-between">
+        <div class="cl-fila" style="gap:6px">
+          <span class="cl-selo cl-selo-${SELO_ESTADO[p.estado] || 'neutro'}"><span class="ponto"></span>${esc(ROTULO_ESTADO[p.estado] || p.estado)}</span>
+          <span class="cl-caption">${itens || 'sem itens'}</span>
+        </div>
+        <button type="button" class="cl-botao cl-botao-terciario cl-botao-pequeno" data-pdf-prof="${p.pedido_id}">${p.confirmacao_pdf_caminho ? 'Ver confirmação (PDF)' : 'Gerar confirmação (PDF)'}</button>
+      </div>
+    </div>`;
+}
+
+let PEDIDOS_DO_CICLO = {};
 
 async function carregarResumo() {
   const r = await api('cli_professor_resumo');
@@ -37,6 +65,41 @@ async function carregarResumo() {
   elListaResumo.innerHTML = r.dados.length
     ? r.dados.map(cartaoCiclo).join('')
     : '<p class="cl-vazio">Ainda não gerou nenhum ciclo.</p>';
+
+  elListaResumo.querySelectorAll('[data-alternar]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const alvo = document.getElementById(btn.dataset.alternar);
+      const abrir = alvo.hidden;
+      if (abrir && !PEDIDOS_DO_CICLO[btn.dataset.ciclo]) {
+        alvo.innerHTML = '<p class="cl-vazio">A carregar…</p>';
+        alvo.hidden = false;
+        const rp = await api('cli_professor_pedidos_do_ciclo', { p_ciclo: btn.dataset.ciclo });
+        if (!rp.ok) { alvo.innerHTML = `<p class="cl-vazio">${esc(rp.erro)}</p>`; return; }
+        PEDIDOS_DO_CICLO[btn.dataset.ciclo] = rp.dados;
+      }
+      if (PEDIDOS_DO_CICLO[btn.dataset.ciclo]) {
+        alvo.innerHTML = PEDIDOS_DO_CICLO[btn.dataset.ciclo].map(linhaPedidoProfessor).join('') || '<p class="cl-vazio">Sem pedidos.</p>';
+        ligarBotoesPdfProfessor(alvo, btn.dataset.ciclo);
+      }
+      alvo.hidden = !abrir;
+      btn.textContent = abrir ? 'Ocultar pedidos' : 'Ver pedidos';
+    });
+  });
+}
+
+function ligarBotoesPdfProfessor(container, ciclo) {
+  container.querySelectorAll('[data-pdf-prof]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const pedido = (PEDIDOS_DO_CICLO[ciclo] || []).find((p) => p.pedido_id === btn.dataset.pdfProf);
+      if (!pedido) return;
+      const jaTinha = !!pedido.confirmacao_pdf_caminho;
+      btn.disabled = true;
+      btn.textContent = 'A preparar…';
+      await mostrarConfirmacaoPdf(pedido, pedido.empresa_nome, CEDULA_PESSOA);
+      btn.disabled = false;
+      btn.textContent = pedido.confirmacao_pdf_caminho ? 'Ver confirmação (PDF)' : 'Gerar confirmação (PDF)';
+    });
+  });
 }
 
 // ── agendamento automático ───────────────────────────────────────────
@@ -113,6 +176,7 @@ ligarFormularioLogin('form-login', async () => {
     await sb.auth.signOut();
     return;
   }
+  CEDULA_PESSOA = ctx.pessoa.cedula;
   mostrarPainel();
   montarTopo(ctx);
   await Promise.all([carregarAgendamento(), carregarResumo()]);
@@ -121,6 +185,7 @@ ligarFormularioLogin('form-login', async () => {
 (async function arrancar() {
   const ctx = await quemSou();
   if (!ctx || !ctx.pessoa || ctx.pessoa.papel !== 'professor') { mostrarEntrada(); return; }
+  CEDULA_PESSOA = ctx.pessoa.cedula;
   mostrarPainel();
   montarTopo(ctx);
   await Promise.all([carregarAgendamento(), carregarResumo()]);
