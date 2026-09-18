@@ -11,6 +11,7 @@ let PEDIDOS_CACHE = null;
 let filtroAtual = 'todos';
 let pedidoParaFatura = null;
 let NOME_EMPRESA = null;
+let CEDULA_PESSOA = null;
 
 function mostrarPainel() { elAVerificar.hidden = true; elEntrada.hidden = true; elPainel.hidden = false; }
 function mostrarEntrada() { elAVerificar.hidden = true; elPainel.hidden = true; elEntrada.hidden = false; }
@@ -67,7 +68,7 @@ function linhaPedido(p) {
       <p class="cl-caption" style="margin-top:2px">${itens || 'sem itens'}</p>
       <div class="cl-fila" style="margin-top:var(--cl-e3)">
         ${botaoAcao(p)}
-        <button type="button" class="cl-botao cl-botao-secundario cl-botao-pequeno" data-pdf="${p.pedido_id}">Confirmação (PDF)</button>
+        <button type="button" class="cl-botao cl-botao-secundario cl-botao-pequeno" data-pdf="${p.pedido_id}">${p.confirmacao_pdf_caminho ? 'Ver confirmação (PDF)' : 'Gerar confirmação (PDF)'}</button>
       </div>
     </article>`;
 }
@@ -116,10 +117,19 @@ function ligarAcoes() {
     });
   });
   elLista.querySelectorAll('[data-pdf]').forEach((btn) => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
       const pedido = (PEDIDOS_CACHE || []).find((p) => p.pedido_id === btn.dataset.pdf);
       if (!pedido) return;
-      gerarConfirmacaoPdf(pedido, NOME_EMPRESA);
+      const jaTinhaConfirmacao = !!pedido.confirmacao_pdf_caminho;
+      btn.disabled = true;
+      btn.textContent = 'A preparar…';
+      await mostrarConfirmacaoPdf(pedido, NOME_EMPRESA, CEDULA_PESSOA);
+      if (!jaTinhaConfirmacao && pedido.confirmacao_pdf_caminho) {
+        await renderizar(); // troca o botão para "Ver confirmação"
+      } else {
+        btn.disabled = false;
+        btn.textContent = jaTinhaConfirmacao ? 'Ver confirmação (PDF)' : 'Gerar confirmação (PDF)';
+      }
     });
   });
 }
@@ -157,6 +167,7 @@ ligarFormularioLogin('form-login', async () => {
     return;
   }
   NOME_EMPRESA = ctx.empresa.nome;
+  CEDULA_PESSOA = ctx.pessoa.cedula;
   mostrarPainel();
   montarTopo(ctx);
   await renderizar();
@@ -167,6 +178,7 @@ ligarFormularioLogin('form-login', async () => {
   if (seProfessorRedirecionar(ctx)) return;
   if (!ctx || !ctx.empresa) { mostrarEntrada(); return; }
   NOME_EMPRESA = ctx.empresa.nome;
+  CEDULA_PESSOA = ctx.pessoa.cedula;
   mostrarPainel();
   montarTopo(ctx);
   await renderizar();

@@ -14,10 +14,13 @@ Documentação completa (PRDs e decisões) em
 ## O que faz
 
 A única fonte de dinheiro **novo** no ecossistema — tudo o resto só
-redistribui ou drena. A cada ciclo, `cli_gerar_ciclo(ciclo, valor_medio)`
+redistribui ou drena. A cada ciclo, `cli_gerar_ciclo(ciclo, valor_maximo)`
 cria pedidos para cada empresa com catálogo (piso proporcional ao custo
 dos produtos + bónus modesto por mérito recente), entrega-os no correio.
-O dinheiro só entra depois de todo um fluxo administrativo real:
+Cada pedido é a soma real de produtos do catálogo escolhidos ao acaso
+(1–3 produtos, quantidade dentro do `qtd_dia`), nunca ultrapassando o
+valor máximo estipulado — nunca uma "média" abstrata. O dinheiro só
+entra depois de todo um fluxo administrativo real:
 
 ```
 enviado → aceite → fatura_emitida → pago → concluído
@@ -64,17 +67,26 @@ um nome livre — necessário para uma cadência diária/semanal não colidir
 com a idempotência de `cli_gerar_ciclo` (um ciclo só se gera uma vez).
 Ver `sql/002_agendamento_automatico.sql`.
 
-## Confirmação de compra em PDF
+## Confirmação de compra em PDF — anexada de verdade no Correio
 
-Cada pedido tem um botão "Confirmação (PDF)", disponível em qualquer
-estado — gerado no próprio browser com **jsPDF** + **jspdf-autotable**
-(via CDN, nenhuma dependência nova no servidor), abre numa nova aba
-(`doc.output('bloburl')` + `window.open`, mais fiável do que
-`dataurlnewwindow` em Chrome headless). Mostra nº do pedido, vendedor,
-cliente, ciclo, data, estado e a tabela de itens com o total — é o
-comprovativo de encomenda (como um recibo de loja), **não** a fatura
-fiscal assinada (essa continua a viver no Subsight e é o que liberta o
-pagamento). Ver `gerarConfirmacaoPdf` em `web/biblioteca/clientify.js`.
+Cada pedido tem um botão "Gerar/Ver confirmação (PDF)", disponível em
+qualquer estado — gerado no browser com **jsPDF** + **jspdf-autotable**
+(via CDN). Mostra nº do pedido, vendedor, cliente, ciclo, data, estado e
+a tabela de itens com o total — é o comprovativo de encomenda (como um
+recibo de loja), **não** a fatura fiscal assinada (essa continua a
+viver no Subsight e é o que liberta o pagamento).
+
+Como o PDF só pode ser gerado num browser, não existe no momento em que
+o pedido é criado (nem manual nem pelo `pg_cron`, sem sessão nenhuma) —
+fica pronto na primeira vez que alguém o abre no Clientify, e a partir
+daí **fica mesmo anexado à mensagem do Correio** que entregou o pedido
+(reaproveita o bucket `correio` e a tabela `correio_anexos` que o
+AeroMail já tinha — não foi preciso construir suporte a anexo nenhum;
+só faltava o Clientify usá-lo). `cli_gerar_ciclo_interno` grava
+`pedidos.correio_id`; `cli_anexar_confirmacao_pdf` liga o ficheiro já
+carregado (`storage.objects`) a essa mensagem, idempotente (não duplica
+se já existir). Ver `mostrarConfirmacaoPdf` em
+`web/biblioteca/clientify.js`.
 
 ## Identidade visual
 

@@ -99,11 +99,10 @@ function ligarFormularioLogin(idForm, aoEntrar) {
   });
 }
 
-// ── confirmação de compra em PDF — gerada no browser (jsPDF), abre
-// numa nova aba para ver/imprimir/guardar. Não é a fatura assinada
-// (essa continua a viver no Subsight) — é só o comprovativo do que foi
-// encomendado, como um recibo de encomenda de uma loja a sério. ──────
-function gerarConfirmacaoPdf(pedido, nomeEmpresa) {
+// ── confirmação de compra em PDF — gerada no browser (jsPDF). Não é a
+// fatura assinada (essa continua a viver no Subsight) — é só o
+// comprovativo do que foi encomendado, como um recibo de loja. ──────
+function construirPdfConfirmacao(pedido, nomeEmpresa) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
   const codigo = pedido.pedido_id.slice(0, 8).toUpperCase();
@@ -149,8 +148,37 @@ function gerarConfirmacaoPdf(pedido, nomeEmpresa) {
     footStyles: { fillColor: [245, 245, 245], textColor: 20, fontStyle: 'bold' },
   });
 
-  const url = doc.output('bloburl');
-  window.open(url, '_blank');
+  return doc;
+}
+
+// Mostra a confirmação do pedido — se já existe (pedido.confirmacao_
+// pdf_caminho), baixa o ficheiro real já guardado no Storage; senão
+// gera agora, guarda a sério no bucket 'correio' (o mesmo do AeroMail)
+// e anexa à mensagem que entregou o pedido (cli_anexar_confirmacao_
+// pdf) — assim o PDF passa a aparecer também dentro do Correio, não
+// só aqui, e não é regenerado a cada clique.
+async function mostrarConfirmacaoPdf(pedido, nomeEmpresa, cedulaPessoa) {
+  if (pedido.confirmacao_pdf_caminho) {
+    const { data, error } = await sb.storage.from('correio').download(pedido.confirmacao_pdf_caminho);
+    if (error) { alert('Não foi possível abrir o ficheiro guardado: ' + error.message); return; }
+    window.open(URL.createObjectURL(data), '_blank');
+    return;
+  }
+
+  const doc = construirPdfConfirmacao(pedido, nomeEmpresa);
+  const blob = doc.output('blob');
+  const codigo = pedido.pedido_id.slice(0, 8).toUpperCase();
+  const caminho = `${cedulaPessoa}/confirmacao-${codigo}.pdf`;
+
+  const { error: erroUpload } = await sb.storage.from('correio')
+    .upload(caminho, blob, { contentType: 'application/pdf' });
+  if (erroUpload) { alert('Não foi possível guardar o PDF: ' + erroUpload.message); return; }
+
+  const r = await api('cli_anexar_confirmacao_pdf', { p_pedido_id: pedido.pedido_id, p_caminho: caminho });
+  if (!r.ok) { alert(r.erro); return; }
+
+  pedido.confirmacao_pdf_caminho = r.dados.caminho;
+  window.open(URL.createObjectURL(blob), '_blank');
 }
 
 // ── topo (menu sempre em cima) — a empresa e a professora veem nomes

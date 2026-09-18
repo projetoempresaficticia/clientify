@@ -63,7 +63,7 @@ async function carregarAgendamento() {
   const d = r.dados;
   elFrequencia.value = d.frequencia;
   elIntervalo.value = d.intervalo_dias;
-  document.getElementById('a-valor').value = (d.valor_medio / 100).toFixed(2);
+  document.getElementById('a-valor').value = (d.valor_maximo / 100).toFixed(2);
   document.getElementById('a-ativo').checked = d.ativo;
   alternarCampoIntervalo();
   elStatusAgendamento.textContent = textoStatusAgendamento(d);
@@ -77,7 +77,7 @@ document.getElementById('form-agendamento').addEventListener('submit', async (ev
   mostrarMsg(msg, 'A guardar…');
   const r = await api('cli_definir_agendamento', {
     p_frequencia: elFrequencia.value,
-    p_valor_medio: Math.round(Number(document.getElementById('a-valor').value) * 100),
+    p_valor_maximo: Math.round(Number(document.getElementById('a-valor').value) * 100),
     p_intervalo_dias: elFrequencia.value === 'personalizado' ? Number(elIntervalo.value) : null,
     p_ativo: document.getElementById('a-ativo').checked,
   });
@@ -96,7 +96,7 @@ document.getElementById('form-gerar').addEventListener('submit', async (ev) => {
   mostrarMsg(msg, 'A gerar…');
   const r = await api('cli_gerar_ciclo', {
     p_ciclo: document.getElementById('g-ciclo').value,
-    p_valor_medio: Math.round(Number(document.getElementById('g-valor').value) * 100),
+    p_valor_maximo: Math.round(Number(document.getElementById('g-valor').value) * 100),
   });
   btn.disabled = false;
   if (!r.ok) { mostrarMsg(msg, r.erro, 'erro'); return; }
