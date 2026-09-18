@@ -90,6 +90,14 @@ carregado (`storage.objects`) a essa mensagem, idempotente (não duplica
 se já existir). Ver `mostrarConfirmacaoPdf` em
 `web/biblioteca/clientify.js`.
 
+O botão abre a confirmação num **popup embutido** (`<dialog id="janela-
+pdf">` + `<iframe>`), não numa nova aba — o Chrome renderiza o PDF com o
+seu visualizador nativo dentro do iframe, sem precisar de nenhuma
+biblioteca extra de renderização. Presente em `index.html` (empresa) e
+`professor.html` (professora, incluindo dentro do "Ver pedidos" do
+resumo por ciclo). Ver `abrirJanelaPdf`/`ligarJanelaPdf` em
+`web/biblioteca/clientify.js`.
+
 ## Identidade visual
 
 Tema escuro (preto puro), Inter, laranja de marca — a partir dos

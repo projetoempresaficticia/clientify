@@ -177,6 +177,16 @@ dialog {
 dialog::backdrop { background: rgba(0,0,0,.7); }
 .mono { font-family: ui-monospace, 'SF Mono', Consolas, monospace; }
 
+/* ── janela da confirmação em PDF — maior, sem padding (o iframe
+   ocupa tudo), mesmo espírito do "Ver boleto" do EmDia ─────────────── */
+dialog.cl-modal-pdf { max-width: 760px; padding: 0; }
+.cl-janela-cabeca {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--cl-e4);
+  padding: var(--cl-e3) var(--cl-e4); border-bottom: 1px solid var(--cl-borda);
+}
+.cl-janela-cabeca h2 { font: 700 16px/1 var(--cl-fonte); }
+#pdf-iframe { width: 100%; height: 72vh; border: 0; display: block; background: #fff; }
+
 /* ── entrada (login) ──────────────────────────────────────────────────── */
 .cl-a-verificar { min-height: 100svh; display: flex; align-items: center; justify-content: center; }
 .cl-entrada {

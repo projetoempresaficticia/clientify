@@ -151,6 +151,27 @@ function construirPdfConfirmacao(pedido, nomeEmpresa) {
   return doc;
 }
 
+// Abre a confirmação num popup embutido (<dialog> + <iframe>) em vez de
+// nova aba — cada página traz o seu próprio #janela-pdf; sem ele, cai
+// para window.open como reserva.
+function abrirJanelaPdf(url) {
+  const janela = document.getElementById('janela-pdf');
+  const iframe = document.getElementById('pdf-iframe');
+  if (!janela || !iframe) { window.open(url, '_blank'); return; }
+  iframe.src = url;
+  janela.showModal();
+}
+
+function ligarJanelaPdf() {
+  const janela = document.getElementById('janela-pdf');
+  const iframe = document.getElementById('pdf-iframe');
+  const btnFechar = document.getElementById('pdf-fechar');
+  if (!janela || !iframe || !btnFechar) return;
+  const limpar = () => { iframe.src = 'about:blank'; };
+  btnFechar.addEventListener('click', () => janela.close());
+  janela.addEventListener('close', limpar);
+}
+
 // Mostra a confirmação do pedido — se já existe (pedido.confirmacao_
 // pdf_caminho), baixa o ficheiro real já guardado no Storage; senão
 // gera agora, guarda a sério no bucket 'correio' (o mesmo do AeroMail)
@@ -161,7 +182,7 @@ async function mostrarConfirmacaoPdf(pedido, nomeEmpresa, cedulaPessoa) {
   if (pedido.confirmacao_pdf_caminho) {
     const { data, error } = await sb.storage.from('correio').download(pedido.confirmacao_pdf_caminho);
     if (error) { alert('Não foi possível abrir o ficheiro guardado: ' + error.message); return; }
-    window.open(URL.createObjectURL(data), '_blank');
+    abrirJanelaPdf(URL.createObjectURL(data));
     return;
   }
 
@@ -178,7 +199,7 @@ async function mostrarConfirmacaoPdf(pedido, nomeEmpresa, cedulaPessoa) {
   if (!r.ok) { alert(r.erro); return; }
 
   pedido.confirmacao_pdf_caminho = r.dados.caminho;
-  window.open(URL.createObjectURL(blob), '_blank');
+  abrirJanelaPdf(URL.createObjectURL(blob));
 }
 
 // ── topo (menu sempre em cima) — a empresa e a professora veem nomes

@@ -168,6 +168,7 @@ document.getElementById('form-gerar').addEventListener('submit', async (ev) => {
 });
 
 ligarVerSenha();
+ligarJanelaPdf();
 ligarFormularioLogin('form-login', async () => {
   const ctx = await quemSou();
   if (!ctx || !ctx.pessoa || ctx.pessoa.papel !== 'professor') {

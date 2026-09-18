@@ -2,7 +2,7 @@
 <html lang="pt-PT">
 <head>
   <meta charset="UTF-8" />
-  <meta name="clientify-versao" content="adcbdbe7fa71" />
+  <meta name="clientify-versao" content="e7145a6d36ff" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Clientify — Pedidos</title>
   <meta name="description" content="Os pedidos dos seus clientes, num só lugar." />
@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
-  <link rel="stylesheet" href="web/biblioteca/clientify.css?v=236aa0b2" />
+  <link rel="stylesheet" href="web/biblioteca/clientify.css?v=914fd3e4" />
 </head>
 <body>
 
@@ -79,12 +79,20 @@
   </div>
 </dialog>
 
+<dialog id="janela-pdf" class="cl-modal-pdf">
+  <div class="cl-janela-cabeca">
+    <h2>Confirmação de compra</h2>
+    <button type="button" class="cl-botao cl-botao-terciario cl-botao-pequeno" id="pdf-fechar">Fechar</button>
+  </div>
+  <iframe id="pdf-iframe" title="Confirmação de compra em PDF"></iframe>
+</dialog>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.js"></script>
 <script src="https://projetoempresaficticia.github.io/pp-base/web/comum.js"></script>
-<script src="web/biblioteca/clientify.js?v=6550e8ef"></script>
+<script src="web/biblioteca/clientify.js?v=2794da5c"></script>
 <script src="web/atualizar.js?v=bd04b40a"></script>
-<script src="app.js?v=f499f8c9"></script>
+<script src="app.js?v=11984963"></script>
 </body>
 </html>

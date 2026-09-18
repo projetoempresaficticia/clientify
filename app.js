@@ -157,6 +157,7 @@ elSegmentado.querySelectorAll('button').forEach((btn) => {
 });
 
 ligarVerSenha();
+ligarJanelaPdf();
 ligarFormularioLogin('form-login', async () => {
   const ctx = await quemSou();
   if (seProfessorRedirecionar(ctx)) return;
